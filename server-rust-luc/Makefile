@@ -53,15 +53,15 @@ define Package/server-rust-luc/install
 		$(1)/etc/config/
 	$(INSTALL_BIN) ./root/etc/init.d/server-rust-luc \
 		$(1)/etc/init.d/
-	$(INSTALL_DATA) ./root/etc/uci-defaults/80_luci-server-rust-luc \
+	$(INSTALL_DATA) ./root/etc/uci-defaults/80_server-rust-luc \
 		$(1)/etc/uci-defaults/
 endef
 
 define Package/server-rust-luc/postinst
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
-	( . /etc/uci-defaults/80_luci-server-rust-luc ) && \
-		rm -f /etc/uci-defaults/80_luci-server-rust-luc
+	( . /etc/uci-defaults/80_server-rust-luc ) && \
+		rm -f /etc/uci-defaults/80_server-rust-luc
 	rm -rf /tmp/luci-indexcache /tmp/luci-modulecache/
 }
 endef
