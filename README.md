@@ -32,11 +32,11 @@ LuCI web interface for configuring **shadowsocks-rust** `ssserver` and `ssmanage
 
 ### From Release
 ```bash
-# Download the .apk file from GitHub Releases
-wget https://github.com/yorkane/server-rust-luc/releases/latest/download/luci-app-shadowsocks-rust-server_*.apk
+# Download the release package
+wget https://github.com/yorkane/server-rust-luc/releases/download/v1.0.0/luci-app-shadowsocks-rust-server-1.0.0-r1.apk
 
-# Install on your ImmortalWrt device
-apk add --allow-untrusted luci-app-shadowsocks-rust-server_*.apk
+# Install using APK (ImmortalWrt 25.12+ and OpenWrt 24.10+)
+apk add --allow-untrusted luci-app-shadowsocks-rust-server-1.0.0-r1.apk
 ```
 
 ### Prerequisites
