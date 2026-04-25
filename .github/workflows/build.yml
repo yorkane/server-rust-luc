@@ -1,0 +1,51 @@
+name: Build APK Package
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - x86_64-24.10-SNAPSHOT
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build packages
+        uses: immortalwrt/gh-action-sdk@master
+        env:
+          ARCH: ${{ matrix.arch }}
+          FEEDNAME: custom
+          PACKAGES: luci-app-shadowsocks-rust-server
+          NO_SHFMT_CHECK: 1
+          INDEX: 1
+          V: s
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: luci-app-shadowsocks-rust-server-${{ matrix.arch }}
+          path: |
+            bin/packages/*/custom/*.apk
+            bin/packages/*/custom/*.ipk
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            bin/packages/*/custom/*.apk
+            bin/packages/*/custom/*.ipk
+          generate_release_notes: true

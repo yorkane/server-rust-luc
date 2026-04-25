@@ -1,0 +1,28 @@
+
+config general 'main'
+	option enabled '0'
+	option log_level 'info'
+
+config server 'default_server'
+	option enabled '1'
+	option server '0.0.0.0'
+	option server_port '8388'
+	option method 'aes-256-gcm'
+	option password ''
+	option timeout '300'
+	option no_delay '0'
+	option ipv6_first '0'
+	option mode 'tcp_and_udp'
+
+config manager 'main_manager'
+	option enabled '0'
+	option manager_address '127.0.0.1'
+	option manager_port '6100'
+	option method 'aes-256-gcm'
+	option timeout '300'
+	option mode 'tcp_and_udp'
+
+config manager_user
+	option server_port '8001'
+	option password ''
+	option method 'aes-256-gcm'

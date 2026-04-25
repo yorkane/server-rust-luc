@@ -1,0 +1,23 @@
+{
+	"luci-app-shadowsocks-rust-server": {
+		"description": "Grant access to Shadowsocks Rust Server configuration",
+		"read": {
+			"uci": ["shadowsocks-rust-server"],
+			"ubus": {
+				"service": ["list"],
+				"file": ["stat", "read", "exec"]
+			},
+			"file": {
+				"/etc/init.d/shadowsocks-rust-server": ["list"],
+				"/var/run/ss-server-*.pid": ["read"],
+				"/var/etc/shadowsocks-rust-server/*": ["read"]
+			}
+		},
+		"write": {
+			"uci": ["shadowsocks-rust-server"],
+			"ubus": {
+				"file": ["exec"]
+			}
+		}
+	}
+}

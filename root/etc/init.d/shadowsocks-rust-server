@@ -1,0 +1,168 @@
+#!/bin/sh /etc/rc.common
+# SPDX-License-Identifier: GPL-2.0-only
+# Copyright (C) 2024-2026 yorkane
+
+USE_PROCD=1
+START=95
+STOP=15
+
+NAME="shadowsocks-rust-server"
+CONF="shadowsocks-rust-server"
+CONFDIR="/var/etc/${NAME}"
+
+validate_section() {
+	uci_load_validate "${CONF}" "$1" "$2" "$3" \
+		'enabled:bool:0' \
+		'server:string' \
+		'server_port:port' \
+		'password:string' \
+		'method:string' \
+		'timeout:uinteger:300' \
+		'no_delay:bool:0' \
+		'ipv6_first:bool:0' \
+		'mode:string:tcp_and_udp' \
+		'plugin:string' \
+		'plugin_opts:string' \
+		'acl:string'
+}
+
+validate_manager_section() {
+	uci_load_validate "${CONF}" manager "$1" "$2" \
+		'enabled:bool:0' \
+		'manager_address:string:127.0.0.1' \
+		'manager_port:port:6100' \
+		'method:string:aes-256-gcm' \
+		'timeout:uinteger:300' \
+		'mode:string:tcp_and_udp'
+}
+
+generate_server_config() {
+	local section="$1"
+	local enabled server server_port password method timeout no_delay ipv6_first mode plugin plugin_opts acl
+
+	validate_section server "$section" || {
+		echo "Validation failed for server section $section" >&2
+		return 1
+	}
+
+	[ "$enabled" = "1" ] || return 0
+
+	local config_file="${CONFDIR}/${section}.json"
+
+	json_init
+	json_add_string "server" "$server"
+	json_add_int "server_port" "$server_port"
+	json_add_string "password" "$password"
+	json_add_string "method" "$method"
+	json_add_int "timeout" "$timeout"
+
+	[ "$no_delay" = "1" ] && json_add_boolean "no_delay" 1
+	[ "$ipv6_first" = "1" ] && json_add_boolean "ipv6_first" 1
+	[ "$mode" = "tcp_only" ] && json_add_string "mode" "tcp_only"
+	[ "$mode" = "udp_only" ] && json_add_string "mode" "udp_only"
+	[ "$mode" = "tcp_and_udp" ] && json_add_string "mode" "tcp_and_udp"
+
+	if [ -n "$plugin" ]; then
+		json_add_string "plugin" "$plugin"
+		[ -n "$plugin_opts" ] && json_add_string "plugin_opts" "$plugin_opts"
+	fi
+
+	json_dump > "$config_file"
+	json_cleanup
+
+	procd_open_instance "ss-server-${section}"
+	procd_set_param command /usr/bin/ssserver -c "$config_file"
+	[ -n "$acl" ] && procd_append_param command --acl "$acl"
+	procd_set_param respawn
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+	procd_set_param file "$config_file"
+	procd_close_instance
+}
+
+generate_manager_config() {
+	local section="$1"
+	local enabled manager_address manager_port method timeout mode
+
+	validate_manager_section "$section" || {
+		echo "Validation failed for manager section $section" >&2
+		return 1
+	}
+
+	[ "$enabled" = "1" ] || return 0
+
+	local config_file="${CONFDIR}/manager_${section}.json"
+	local manager_addr="${manager_address}:${manager_port}"
+
+	# Build JSON config for manager with user list
+	local servers_json=""
+	local first=1
+
+	generate_manager_user() {
+		local user_section="$1"
+		local user_port user_password user_method
+
+		config_get user_port "$user_section" 'server_port'
+		config_get user_password "$user_section" 'password'
+		config_get user_method "$user_section" 'method' "$method"
+
+		[ -z "$user_port" ] && return 0
+		[ -z "$user_password" ] && return 0
+
+		if [ "$first" = "1" ]; then
+			first=0
+		else
+			servers_json="${servers_json},"
+		fi
+
+		servers_json="${servers_json}{\"server_port\":${user_port},\"password\":\"${user_password}\",\"method\":\"${user_method}\"}"
+	}
+
+	config_foreach generate_manager_user manager_user
+
+	cat > "$config_file" <<-EOF
+	{
+	    "manager_address": "${manager_addr}",
+	    "servers": [${servers_json}],
+	    "method": "${method}",
+	    "timeout": ${timeout},
+	    "mode": "${mode}"
+	}
+	EOF
+
+	procd_open_instance "ss-manager-${section}"
+	procd_set_param command /usr/bin/ssmanager -c "$config_file"
+	procd_set_param respawn
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+	procd_set_param file "$config_file"
+	procd_close_instance
+}
+
+start_service() {
+	local main_enabled
+	config_load "${CONF}"
+	config_get main_enabled main enabled 0
+
+	[ "$main_enabled" = "1" ] || return 0
+
+	mkdir -p "${CONFDIR}"
+
+	. /usr/share/libubox/jshn.sh
+
+	config_foreach generate_server_config server
+	config_foreach generate_manager_config manager
+}
+
+stop_service() {
+	rm -rf "${CONFDIR}"
+}
+
+reload_service() {
+	stop
+	start
+}
+
+service_triggers() {
+	procd_add_reload_trigger "${CONF}"
+}
