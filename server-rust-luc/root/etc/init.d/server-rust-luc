@@ -10,42 +10,29 @@ NAME="server-rust-luc"
 CONF="server-rust-luc"
 CONFDIR="/var/etc/${NAME}"
 
-validate_section() {
-	uci_load_validate "${CONF}" "$1" "$2" "$3" \
-		'enabled:bool:0' \
-		'server:string' \
-		'server_port:port' \
-		'password:string' \
-		'method:string' \
-		'timeout:uinteger:300' \
-		'no_delay:bool:0' \
-		'ipv6_first:bool:0' \
-		'mode:string:tcp_and_udp' \
-		'plugin:string' \
-		'plugin_opts:string' \
-		'acl:string'
-}
-
-validate_manager_section() {
-	uci_load_validate "${CONF}" manager "$1" "$2" \
-		'enabled:bool:0' \
-		'manager_address:string:127.0.0.1' \
-		'manager_port:port:6100' \
-		'method:string:aes-256-gcm' \
-		'timeout:uinteger:300' \
-		'mode:string:tcp_and_udp'
-}
-
 generate_server_config() {
 	local section="$1"
 	local enabled server server_port password method timeout no_delay ipv6_first mode plugin plugin_opts acl
 
-	validate_section server "$section" || {
-		echo "Validation failed for server section $section" >&2
-		return 1
-	}
-
+	config_get_bool enabled "$section" 'enabled' 0
 	[ "$enabled" = "1" ] || return 0
+
+	config_get server "$section" 'server' '0.0.0.0'
+	config_get server_port "$section" 'server_port' '8388'
+	config_get password "$section" 'password' ''
+	config_get method "$section" 'method' 'aes-256-gcm'
+	config_get timeout "$section" 'timeout' '300'
+	config_get_bool no_delay "$section" 'no_delay' 0
+	config_get_bool ipv6_first "$section" 'ipv6_first' 0
+	config_get mode "$section" 'mode' 'tcp_and_udp'
+	config_get plugin "$section" 'plugin' ''
+	config_get plugin_opts "$section" 'plugin_opts' ''
+	config_get acl "$section" 'acl' ''
+
+	[ -z "$password" ] && {
+		echo "server-rust-luc: skipping server $section - no password set" >&2
+		return 0
+	}
 
 	local config_file="${CONFDIR}/${section}.json"
 
@@ -58,9 +45,7 @@ generate_server_config() {
 
 	[ "$no_delay" = "1" ] && json_add_boolean "no_delay" 1
 	[ "$ipv6_first" = "1" ] && json_add_boolean "ipv6_first" 1
-	[ "$mode" = "tcp_only" ] && json_add_string "mode" "tcp_only"
-	[ "$mode" = "udp_only" ] && json_add_string "mode" "udp_only"
-	[ "$mode" = "tcp_and_udp" ] && json_add_string "mode" "tcp_and_udp"
+	json_add_string "mode" "$mode"
 
 	if [ -n "$plugin" ]; then
 		json_add_string "plugin" "$plugin"
@@ -78,18 +63,22 @@ generate_server_config() {
 	procd_set_param stderr 1
 	procd_set_param file "$config_file"
 	procd_close_instance
+
+	echo "server-rust-luc: started server instance $section on port $server_port" >&2
 }
 
 generate_manager_config() {
 	local section="$1"
 	local enabled manager_address manager_port method timeout mode
 
-	validate_manager_section "$section" || {
-		echo "Validation failed for manager section $section" >&2
-		return 1
-	}
-
+	config_get_bool enabled "$section" 'enabled' 0
 	[ "$enabled" = "1" ] || return 0
+
+	config_get manager_address "$section" 'manager_address' '127.0.0.1'
+	config_get manager_port "$section" 'manager_port' '6100'
+	config_get method "$section" 'method' 'aes-256-gcm'
+	config_get timeout "$section" 'timeout' '300'
+	config_get mode "$section" 'mode' 'tcp_and_udp'
 
 	local config_file="${CONFDIR}/manager_${section}.json"
 	local manager_addr="${manager_address}:${manager_port}"
@@ -137,14 +126,19 @@ generate_manager_config() {
 	procd_set_param stderr 1
 	procd_set_param file "$config_file"
 	procd_close_instance
+
+	echo "server-rust-luc: started manager instance $section" >&2
 }
 
 start_service() {
 	local main_enabled
 	config_load "${CONF}"
-	config_get main_enabled main enabled 0
+	config_get_bool main_enabled main enabled 0
 
-	[ "$main_enabled" = "1" ] || return 0
+	[ "$main_enabled" = "1" ] || {
+		echo "server-rust-luc: service disabled (set enabled=1 in general section)" >&2
+		return 0
+	}
 
 	mkdir -p "${CONFDIR}"
 
