@@ -28,6 +28,13 @@ define Package/luci-app-shadowsocks-rust-server/description
   ssmanager multi-user management, and real-time status monitoring.
 endef
 
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+endef
+
+define Build/Compile
+endef
+
 define Package/luci-app-shadowsocks-rust-server/install
 	$(INSTALL_DIR) $(1)/usr/share/luci/menu.d
 	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
