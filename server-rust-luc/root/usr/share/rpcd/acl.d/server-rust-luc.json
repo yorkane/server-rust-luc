@@ -1,0 +1,23 @@
+{
+	"server-rust-luc": {
+		"description": "Grant access to Server Rust Luc configuration",
+		"read": {
+			"uci": ["server-rust-luc"],
+			"ubus": {
+				"service": ["list"],
+				"file": ["stat", "read", "exec"]
+			},
+			"file": {
+				"/etc/init.d/server-rust-luc": ["list"],
+				"/var/run/ss-server-*.pid": ["read"],
+				"/var/etc/server-rust-luc/*": ["read"]
+			}
+		},
+		"write": {
+			"uci": ["server-rust-luc"],
+			"ubus": {
+				"file": ["exec"]
+			}
+		}
+	}
+}

@@ -39,11 +39,11 @@ var encryption_methods = [
 ];
 
 function getServiceStatus() {
-	return L.resolveDefault(callServiceList('shadowsocks-rust-server'), {})
+	return L.resolveDefault(callServiceList('server-rust-luc'), {})
 		.then(function(res) {
 			var isRunning = false;
 			try {
-				isRunning = res['shadowsocks-rust-server']['instances'] != null;
+				isRunning = res['server-rust-luc']['instances'] != null;
 			} catch(e) {}
 			return isRunning;
 		});
@@ -62,7 +62,7 @@ return view.extend({
 	load: function() {
 		return Promise.all([
 			getServiceStatus(),
-			uci.load('shadowsocks-rust-server')
+			uci.load('server-rust-luc')
 		]);
 	},
 
@@ -70,8 +70,8 @@ return view.extend({
 		var isRunning = data[0];
 		var m, s, o;
 
-		m = new form.Map('shadowsocks-rust-server', _('Shadowsocks Rust Server'),
-			_('Configure shadowsocks-rust server instances. Each instance runs as an independent ssserver process.'));
+		m = new form.Map('server-rust-luc', _('Server Rust Luc'),
+			_('Configure server-rust-luc instances. Each instance runs as an independent ssserver process.'));
 
 		/* Global settings */
 		s = m.section(form.TypedSection, 'general', _('General Settings'));
@@ -157,7 +157,7 @@ return view.extend({
 		o.depends('plugin', /./);
 
 		o = s.option(form.Value, 'acl', _('ACL File'));
-		o.placeholder = '/etc/shadowsocks-rust/acl/server.acl';
+		o.placeholder = '/etc/server-rust-luc/acl/server.acl';
 		o.optional = true;
 
 		return m.render();

@@ -1,0 +1,16 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@server-rust-luc[-1]
+	add ucitrack server-rust-luc
+	set ucitrack.@server-rust-luc[-1].init=server-rust-luc
+	commit ucitrack
+EOF
+
+# Ensure config file exists
+[ -f /etc/config/server-rust-luc ] || touch /etc/config/server-rust-luc
+
+chmod +x /etc/init.d/server-rust-luc 2>/dev/null
+
+exit 0

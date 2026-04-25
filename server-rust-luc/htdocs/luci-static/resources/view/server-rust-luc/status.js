@@ -13,11 +13,11 @@ var callServiceList = rpc.declare({
 });
 
 function getInstances() {
-	return L.resolveDefault(callServiceList('shadowsocks-rust-server'), {})
+	return L.resolveDefault(callServiceList('server-rust-luc'), {})
 		.then(function(res) {
 			var instances = [];
 			try {
-				var svc = res['shadowsocks-rust-server'];
+				var svc = res['server-rust-luc'];
 				if (svc && svc.instances) {
 					Object.keys(svc.instances).forEach(function(name) {
 						var inst = svc.instances[name];
@@ -92,7 +92,7 @@ return view.extend({
 				E('h3', { 'style': 'margin-top:1.5em' }, _('Process Information')),
 				E('pre', {
 					'style': 'background:#1a1a2e;color:#e0e0e0;padding:12px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.5'
-				}, procInfo || _('No shadowsocks-rust processes found'))
+				}, procInfo || _('No server-rust-luc processes found'))
 			]);
 		});
 	},
@@ -104,14 +104,14 @@ return view.extend({
 		var statusContainer = E('div', { 'id': 'ss-status-container' });
 
 		var view = E('div', { 'class': 'cbi-map' }, [
-			E('h2', {}, _('Shadowsocks Rust Server - Status')),
+			E('h2', {}, _('Server Rust Luc - Status')),
 			E('div', { 'class': 'cbi-map-descr' },
-				_('Real-time status of shadowsocks-rust server and manager instances.')),
+				_('Real-time status of server-rust-luc server and manager instances.')),
 			E('div', { 'style': 'margin:1em 0' }, [
 				E('button', {
 					'class': 'btn cbi-button cbi-button-action',
 					'click': L.bind(function() {
-						return fs.exec('/etc/init.d/shadowsocks-rust-server', ['restart'])
+						return fs.exec('/etc/init.d/server-rust-luc', ['restart'])
 							.then(L.bind(function() {
 								window.setTimeout(L.bind(this.poll_status, this, statusContainer), 2000);
 							}, this));
@@ -121,7 +121,7 @@ return view.extend({
 				E('button', {
 					'class': 'btn cbi-button cbi-button-negative',
 					'click': L.bind(function() {
-						return fs.exec('/etc/init.d/shadowsocks-rust-server', ['stop'])
+						return fs.exec('/etc/init.d/server-rust-luc', ['stop'])
 							.then(L.bind(function() {
 								window.setTimeout(L.bind(this.poll_status, this, statusContainer), 1000);
 							}, this));

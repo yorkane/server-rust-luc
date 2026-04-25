@@ -1,0 +1,39 @@
+{
+	"admin/services/server-rust-luc": {
+		"title": "Server Rust Luc",
+		"order": 60,
+		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": ["server-rust-luc"],
+			"uci": {
+				"server-rust-luc": true
+			}
+		}
+	},
+	"admin/services/server-rust-luc/servers": {
+		"title": "Server Instances",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "server-rust-luc/servers"
+		}
+	},
+	"admin/services/server-rust-luc/manager": {
+		"title": "Manager",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "server-rust-luc/manager"
+		}
+	},
+	"admin/services/server-rust-luc/status": {
+		"title": "Status",
+		"order": 30,
+		"action": {
+			"type": "view",
+			"path": "server-rust-luc/status"
+		}
+	}
+}

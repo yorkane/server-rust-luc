@@ -6,8 +6,8 @@ USE_PROCD=1
 START=95
 STOP=15
 
-NAME="shadowsocks-rust-server"
-CONF="shadowsocks-rust-server"
+NAME="server-rust-luc"
+CONF="server-rust-luc"
 CONFDIR="/var/etc/${NAME}"
 
 validate_section() {

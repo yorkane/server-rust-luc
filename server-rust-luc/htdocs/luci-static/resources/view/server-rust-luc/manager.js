@@ -37,8 +37,8 @@ return view.extend({
 	render: function() {
 		var m, s, o;
 
-		m = new form.Map('shadowsocks-rust-server', _('Shadowsocks Rust Manager'),
-			_('Configure ssmanager to dynamically manage multiple Shadowsocks server instances with different ports and passwords.'));
+		m = new form.Map('server-rust-luc', _('Server Rust Luc Manager'),
+			_('Configure ssmanager to dynamically manage multiple Server Rust Luc instances with different ports and passwords.'));
 
 		/* Manager settings */
 		s = m.section(form.TypedSection, 'manager', _('Manager Configuration'));

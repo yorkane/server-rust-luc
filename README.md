@@ -1,6 +1,6 @@
-# luci-app-shadowsocks-rust-server
+# server-rust-luc
 
-LuCI web interface for configuring **shadowsocks-rust** `ssserver` and `ssmanager` on OpenWrt/ImmortalWrt.
+LuCI web interface for configuring **server-rust-luc** `ssserver` and `ssmanager` on OpenWrt/ImmortalWrt.
 
 ## Features
 
@@ -33,16 +33,16 @@ LuCI web interface for configuring **shadowsocks-rust** `ssserver` and `ssmanage
 ### From Release
 ```bash
 # Download the release package
-wget https://github.com/yorkane/server-rust-luc/releases/download/v1.0.0/luci-app-shadowsocks-rust-server-1.0.0-r1.apk
+wget https://github.com/yorkane/server-rust-luc/releases/download/v1.0.0/server-rust-luc-1.0.0-r1.apk
 
 # Install using APK (ImmortalWrt 25.12+ and OpenWrt 24.10+)
-apk add --allow-untrusted luci-app-shadowsocks-rust-server-1.0.0-r1.apk
+apk add --allow-untrusted server-rust-luc-1.0.0-r1.apk
 ```
 
 ### Prerequisites
 The following packages must be installed on your router:
 ```bash
-apk add shadowsocks-rust-ssserver shadowsocks-rust-ssmanager
+apk add server-rust-luc-ssserver server-rust-luc-ssmanager
 ```
 
 ## Building
@@ -59,15 +59,15 @@ apk add shadowsocks-rust-ssserver shadowsocks-rust-ssmanager
 echo "src-link custom /path/to/this/repo" >> feeds.conf
 ./scripts/feeds update custom
 ./scripts/feeds install -a -p custom
-make package/luci-app-shadowsocks-rust-server/compile V=s
+make package/server-rust-luc/compile V=s
 ```
 
 ## Configuration
 
-After installation, navigate to **Services → Shadowsocks Rust Server** in the LuCI web interface.
+After installation, navigate to **Services → Server Rust Luc** in the LuCI web interface.
 
 ### UCI Configuration
-The configuration is stored in `/etc/config/shadowsocks-rust-server`.
+The configuration is stored in `/etc/config/server-rust-luc`.
 
 #### Example
 ```

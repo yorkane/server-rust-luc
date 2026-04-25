@@ -28,7 +28,7 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}
           FEEDNAME: custom
-          PACKAGES: luci-app-shadowsocks-rust-server
+          PACKAGES: server-rust-luc
           NO_SHFMT_CHECK: 1
           IGNORE_ERRORS: 1
           V: s
@@ -37,7 +37,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: luci-app-shadowsocks-rust-server-${{ matrix.arch }}
+          name: server-rust-luc-${{ matrix.arch }}
           path: |
             bin/packages/*/custom/*.apk
             bin/packages/*/custom/*.ipk
