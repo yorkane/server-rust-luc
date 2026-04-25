@@ -42,7 +42,7 @@ apk add --allow-untrusted server-rust-luc-1.0.0-r1.apk
 ### Prerequisites
 The following packages must be installed on your router:
 ```bash
-apk add server-rust-luc-ssserver server-rust-luc-ssmanager
+apk add shadowsocks-rust-ssserver shadowsocks-rust-ssmanager
 ```
 
 ## Building
