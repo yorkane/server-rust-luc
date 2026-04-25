@@ -18,7 +18,7 @@ define Package/server-rust-luc
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=LuCI support for Server Rust Luc
-  DEPENDS:=+luci-base +jsonfilter +shadowsocks-rust-ssserver +shadowsocks-rust-ssmanager
+  DEPENDS:=+luci-base +jsonfilter
   PKGARCH:=all
 endef
 

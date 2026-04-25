@@ -6,10 +6,7 @@
 			"type": "firstchild"
 		},
 		"depends": {
-			"acl": ["server-rust-luc"],
-			"uci": {
-				"server-rust-luc": true
-			}
+			"acl": ["server-rust-luc"]
 		}
 	},
 	"admin/services/server-rust-luc/servers": {
