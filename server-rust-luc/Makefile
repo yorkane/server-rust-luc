@@ -63,6 +63,7 @@ define Package/server-rust-luc/postinst
 	( . /etc/uci-defaults/80_server-rust-luc ) && \
 		rm -f /etc/uci-defaults/80_server-rust-luc
 	rm -rf /tmp/luci-indexcache /tmp/luci-modulecache/
+	/etc/init.d/rpcd reload || true
 }
 endef
 
