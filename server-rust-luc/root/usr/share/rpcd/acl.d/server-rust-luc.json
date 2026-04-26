@@ -9,7 +9,7 @@
 			},
 			"file": {
 				"/etc/init.d/server-rust-luc": ["list"],
-				"/var/run/ss-server-*.pid": ["read"],
+				"/var/run/server-rust-luc-*.pid": ["read"],
 				"/var/etc/server-rust-luc/*": ["read"]
 			}
 		},

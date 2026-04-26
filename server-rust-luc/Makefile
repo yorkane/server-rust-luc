@@ -23,9 +23,9 @@ define Package/server-rust-luc
 endef
 
 define Package/server-rust-luc/description
-  Provides web UI to configure server-rust-luc ssserver and ssmanager.
+  Provides web UI to configure server-rust-luc.
   Supports multiple server instances, encryption methods (AEAD/2022),
-  ssmanager multi-user management, and real-time status monitoring.
+  multi-user management, and real-time status monitoring.
 endef
 
 define Build/Prepare

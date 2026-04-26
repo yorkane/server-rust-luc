@@ -71,7 +71,7 @@ return view.extend({
 		var m, s, o;
 
 		m = new form.Map('server-rust-luc', _('Server Rust Luc'),
-			_('Configure server-rust-luc instances. Each instance runs as an independent ssserver process.'));
+			_('Configure server instances. Each instance runs as an independent process.'));
 
 		/* Global settings */
 		s = m.section(form.TypedSection, 'general', _('General Settings'));

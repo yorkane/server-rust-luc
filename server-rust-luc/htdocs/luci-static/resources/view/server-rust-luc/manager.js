@@ -38,7 +38,7 @@ return view.extend({
 		var m, s, o;
 
 		m = new form.Map('server-rust-luc', _('Server Rust Luc Manager'),
-			_('Configure ssmanager to dynamically manage multiple Server Rust Luc instances with different ports and passwords.'));
+			_('Configure the manager to dynamically manage multiple server instances with different ports and passwords.'));
 
 		/* Manager settings */
 		s = m.section(form.TypedSection, 'manager', _('Manager Configuration'));
@@ -81,7 +81,7 @@ return view.extend({
 
 		/* Managed users */
 		s = m.section(form.TypedSection, 'manager_user', _('Managed Users'),
-			_('Define user entries that will be provisioned by ssmanager. Each user gets a unique port and password.'));
+			_('Define user entries that will be provisioned by the manager. Each user gets a unique port and password.'));
 		s.addremove = true;
 		s.anonymous = true;
 		s.template = 'cbi/tblsection';
